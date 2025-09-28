@@ -7,7 +7,7 @@ Um validador de CPF simples e responsivo, construído com React e Tailwind CSS. 
 - **Validação de CPF:** Implementa o algoritmo oficial para validação dos dígitos verificadores.
 - **Máscara de Input:** Formata o CPF no padrão `xxx.xxx.xxx-xx` automaticamente durante a digitação.
 - **Feedback Instantâneo:** A interface responde em tempo real, indicando se o CPF é válido ou inválido.
-- **Design Minimalista:** Interface limpa e responsiva, focada na usabilidade.
+- **Design :** Interface limpa e responsiva, focada na usabilidade.
 
 ## Tecnologias Utilizadas
 
@@ -20,16 +20,19 @@ Um validador de CPF simples e responsivo, construído com React e Tailwind CSS. 
 Para executar este projeto localmente, siga os passos abaixo.
 
 1.  **Clone o repositório:**
+
     ```bash
     git clone <URL_DO_SEU_REPOSITORIO>
     ```
 
 2.  **Navegue até o diretório:**
+
     ```bash
     cd react-cpf-validator
     ```
 
 3.  **Instale as dependências:**
+
     ```bash
     npm install
     ```
