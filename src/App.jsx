@@ -2,6 +2,21 @@ import React, { useState } from "react";
 import { validaCPF } from "./utils/cpfValidator";
 import { FaCheckCircle, FaTimesCircle, FaIdCard } from "react-icons/fa";
 
+/**
+ * Formats a numeric value into CPF mask (000.000.000-00).
+ * Hoisted outside the component to prevent re-creation on every render.
+ * Using early exits for better readability.
+ */
+const formatCpf = (value) => {
+  const numericValue = value.replace(/\D/g, "");
+  
+  if (numericValue.length <= 3) return numericValue;
+  if (numericValue.length <= 6) return `${numericValue.slice(0, 3)}.${numericValue.slice(3)}`;
+  if (numericValue.length <= 9) return `${numericValue.slice(0, 3)}.${numericValue.slice(3, 6)}.${numericValue.slice(6)}`;
+  
+  return `${numericValue.slice(0, 3)}.${numericValue.slice(3, 6)}.${numericValue.slice(6, 9)}-${numericValue.slice(9, 11)}`;
+};
+
 function App() {
   const [cpf, setCpf] = useState("");
   const [message, setMessage] = useState("");
@@ -10,22 +25,11 @@ function App() {
   const handleCpfChange = (e) => {
     const formattedCpf = formatCpf(e.target.value);
     setCpf(formattedCpf);
+    
+    // Clear status when typing to improve feedback
     if (message) {
       setMessage("");
       setIsValid(null);
-    }
-  };
-
-  const formatCpf = (value) => {
-    const numericValue = value.replace(/\D/g, "");
-    if (numericValue.length <= 3) {
-      return numericValue;
-    } else if (numericValue.length <= 6) {
-      return `${numericValue.slice(0, 3)}.${numericValue.slice(3)}`;
-    } else if (numericValue.length <= 9) {
-      return `${numericValue.slice(0, 3)}.${numericValue.slice(3, 6)}.${numericValue.slice(6)}`;
-    } else {
-      return `${numericValue.slice(0, 3)}.${numericValue.slice(3, 6)}.${numericValue.slice(6, 9)}-${numericValue.slice(9, 11)}`;
     }
   };
 
@@ -35,7 +39,7 @@ function App() {
     setMessage(validationResult ? "CPF válido" : "CPF inválido");
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       handleValidate();
     }
@@ -50,35 +54,55 @@ function App() {
         </div>
 
         <div className="relative mb-6">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
             <FaIdCard className="text-gray-400" />
           </div>
           <input
             type="text"
             value={cpf}
             onChange={handleCpfChange}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyDown}
             placeholder="000.000.000-00"
             maxLength="14"
+            aria-label="Digite o CPF para validação"
             className="w-full pl-10 p-3 text-center bg-gray-700 rounded-md border-2 border-gray-600 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 transition-colors duration-300"
           />
         </div>
 
-        <button onClick={handleValidate} className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold py-3 px-4 rounded-md transition-all duration-300 transform hover:shadow-lg hover:-translate-y-1">
+        <button 
+          onClick={handleValidate} 
+          className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold py-3 px-4 rounded-md transition-all duration-300 transform hover:shadow-lg hover:-translate-y-1"
+        >
           Validar
         </button>
 
-        {message && (
-          <div className={`mt-6 flex items-center justify-center p-4 rounded-lg ${isValid ? "bg-green-900/50" : "bg-red-900/50"}`}>
-            {isValid ? <FaCheckCircle className="text-green-400 mr-3 text-2xl" /> : <FaTimesCircle className="text-red-400 mr-3 text-2xl" />}
-            <p className={`text-lg font-semibold ${isValid ? "text-green-300" : "text-red-300"}`}>{message}</p>
+        {message ? (
+          <div 
+            role="status" 
+            aria-live="polite" 
+            className={`mt-6 flex items-center justify-center p-4 rounded-lg ${isValid ? "bg-green-900/50" : "bg-red-900/50"}`}
+          >
+            {isValid ? (
+              <FaCheckCircle className="text-green-400 mr-3 text-2xl" />
+            ) : (
+              <FaTimesCircle className="text-red-400 mr-3 text-2xl" />
+            )}
+            <p className={`text-lg font-semibold ${isValid ? "text-green-300" : "text-red-300"}`}>
+              {message}
+            </p>
           </div>
-        )}
+        ) : null}
       </div>
+      
       <footer className="text-center mt-8 text-gray-500 text-sm">
         <p>
           Developed by{" "}
-          <a className="text-center mt-4 text-orange-500" href="https://github.com/Camiloruas" target="_blank">
+          <a 
+            className="text-orange-500 hover:text-orange-400 transition-colors" 
+            href="https://github.com/Camiloruas" 
+            target="_blank" 
+            rel="noopener noreferrer"
+          >
             Camilo Ruas
           </a>
         </p>
